@@ -57,14 +57,14 @@ func (a *alfredOutputer) Error(err error) {
 
 func (a *alfredOutputer) Result(r searchResult) {
 	descr := fmt.Sprintf("%s, %s", r.Name, r.CountryName)
-	t := time.Now().In(r.Location).Format("3:04PM, Monday")
+	t := time.Now().In(r.Location).Format("Monday, 03:04PM")
 
 	a.AddItem(&alfred.AlfredResponseItem{
 		Valid:    true,
 		Uid:      r.ID,
-		Title:    fmt.Sprintf("%s: %s", descr, t),
+		Title:    fmt.Sprintf("%s 🕐 %s", descr, t),
 		Subtitle: fmt.Sprintf("%s", r.Location.String()),
-		Arg:      fmt.Sprintf("%s: %s", descr, t),
+		Arg:      fmt.Sprintf("%s 🕐 %s", descr, t),
 		Icon:     "images/flags-48/" + r.Country + ".png",
 	})
 }
@@ -86,7 +86,7 @@ func searchTimezones(queryTerms []string) ([]searchResult, error) {
 
 	alfred.InitTerms(queryTerms)
 
-	rows, err := db.Query("SELECT id, name, country, timezone FROM timezone")
+	rows, err := db.Query("SELECT id, name, country, timezone FROM timezone ORDER BY country, name")
 	if err != nil {
 		return nil, err
 	}
